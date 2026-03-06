@@ -1,0 +1,85 @@
+"use client";
+
+import { useState } from "react";
+import { Search, Bell, Heart, User, Menu, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface HeaderProps {
+  onMenuToggle?: () => void;
+}
+
+export default function Header({ onMenuToggle }: HeaderProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 h-[60px] bg-white border-b border-gray-200 flex items-center px-4 gap-4">
+      {/* Left: Hamburger (mobile) + Logo */}
+      <div className="flex items-center gap-3 shrink-0">
+        <button
+          className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+          onClick={onMenuToggle}
+          aria-label="Toggle menu"
+        >
+          <Menu size={20} />
+        </button>
+        <a href="/" className="flex items-center gap-2 group">
+          <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-400 rounded-lg flex items-center justify-center shadow-sm">
+            <Zap size={16} className="text-white fill-white" />
+          </div>
+          <span className="text-xl font-extrabold bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent">
+            Zappy
+          </span>
+        </a>
+      </div>
+
+      {/* Center: Search bar */}
+      <div className="flex-1 max-w-[560px] mx-auto">
+        <div className="relative">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search games and categories"
+            className={cn(
+              "w-full h-10 pl-4 pr-10 rounded-full",
+              "bg-gray-100 border border-transparent",
+              "text-sm text-gray-800 placeholder:text-gray-400",
+              "focus:outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100 focus:bg-white",
+              "transition-all duration-150"
+            )}
+          />
+          <Search
+            size={16}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+          />
+        </div>
+      </div>
+
+      {/* Right: Icons + Login */}
+      <div className="flex items-center gap-1 shrink-0">
+        {/* Notification */}
+        <button className="relative w-10 h-10 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
+          <Bell size={20} />
+          <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[11px] font-bold rounded-full flex items-center justify-center px-1">
+            3
+          </span>
+        </button>
+
+        {/* Favorites */}
+        <button className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
+          <Heart size={20} />
+        </button>
+
+        {/* User avatar */}
+        <button className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
+          <User size={20} />
+        </button>
+
+        {/* Login button */}
+        <button className="ml-1 px-4 py-2 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors">
+          Log in
+        </button>
+      </div>
+    </header>
+  );
+}
