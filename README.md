@@ -39,5 +39,6 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 On every push to `main`, the [workflow](.github/workflows/deploy-pages.yml) builds a static export and deploys to GitHub Pages.
 
-1. In the repo: **Settings → Pages → Build and deployment → Source** = **GitHub Actions**.
-2. After the first push to `main`, the site will be at `https://<username>.github.io/Zappy/`.
+**Nếu trang vẫn hiện README:** Vào repo **Settings → Pages → Build and deployment → Source** chọn **GitHub Actions** (không dùng "Deploy from a branch"). Chi tiết: [docs/GITHUB_PAGES_SETUP.md](docs/GITHUB_PAGES_SETUP.md).
+
+Site: `https://<username>.github.io/Zappy/`

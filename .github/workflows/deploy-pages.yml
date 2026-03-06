@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -33,6 +34,12 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Verify static export
+        run: |
+          test -f out/index.html || (echo "Missing out/index.html" && exit 1)
+          ls -la out/
+          echo "Build output OK"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@3
