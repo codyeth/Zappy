@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getLeaderboard } from "@/lib/supabase/helpers";
+import { Skeleton } from "@/components/ui/Skeleton";
 import type { Game, LeaderboardEntry } from "@/lib/types";
 
 const MEDAL = ["#FFD700", "#A8A9AD", "#CD7F32"]; // gold / silver / bronze
@@ -53,8 +54,14 @@ export default function Leaderboard({
 
       {/* Board */}
       {loading ? (
-        <div className="flex h-32 items-center justify-center">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-red-500 border-t-transparent" />
+        <div className="space-y-2">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton className="h-6 w-6 rounded-full" />
+              <Skeleton className="h-4 flex-1 max-w-[120px]" />
+              <Skeleton className="h-4 w-12" />
+            </div>
+          ))}
         </div>
       ) : entries.length === 0 ? (
         <p className="py-10 text-center text-sm text-gray-400">

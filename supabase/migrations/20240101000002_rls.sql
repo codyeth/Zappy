@@ -13,10 +13,12 @@ alter table public.game_sessions enable row level security;
 -- Anyone can read profiles (for leaderboard display names).
 -- Users can only update their own profile.
 
+drop policy if exists "profiles_select_public" on public.profiles;
 create policy "profiles_select_public"
   on public.profiles for select
   using (true);
 
+drop policy if exists "profiles_update_own" on public.profiles;
 create policy "profiles_update_own"
   on public.profiles for update
   using (auth.uid() = id)
@@ -29,6 +31,7 @@ create policy "profiles_update_own"
 -- Anyone can read active games.
 -- Write operations (insert/update/delete) are admin-only via service role key.
 
+drop policy if exists "games_select_public" on public.games;
 create policy "games_select_public"
   on public.games for select
   using (is_active = true);
@@ -38,15 +41,18 @@ create policy "games_select_public"
 -- Only authenticated users can submit scores.
 -- Users can only delete their own scores.
 
+drop policy if exists "scores_select_public" on public.scores;
 create policy "scores_select_public"
   on public.scores for select
   using (true);
 
+drop policy if exists "scores_insert_authenticated" on public.scores;
 create policy "scores_insert_authenticated"
   on public.scores for insert
   to authenticated
   with check (auth.uid() = user_id);
 
+drop policy if exists "scores_delete_own" on public.scores;
 create policy "scores_delete_own"
   on public.scores for delete
   using (auth.uid() = user_id);
@@ -55,16 +61,19 @@ create policy "scores_delete_own"
 -- Authenticated users can insert sessions and read their own.
 -- Guests (null user_id) are inserted via service role in a server action.
 
+drop policy if exists "sessions_insert_authenticated" on public.game_sessions;
 create policy "sessions_insert_authenticated"
   on public.game_sessions for insert
   to authenticated
   with check (auth.uid() = user_id);
 
+drop policy if exists "sessions_select_own" on public.game_sessions;
 create policy "sessions_select_own"
   on public.game_sessions for select
   to authenticated
   using (auth.uid() = user_id);
 
+drop policy if exists "sessions_update_own" on public.game_sessions;
 create policy "sessions_update_own"
   on public.game_sessions for update
   to authenticated

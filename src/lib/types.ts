@@ -82,6 +82,21 @@ export interface GameSession {
   score: number | null;
 }
 
+export interface RecentScoreEntry {
+  gameId: string;
+  gameSlug: string;
+  gameTitle: string;
+  thumbnailGradient: string;
+  score: number;
+  createdAt: string;
+}
+
+export interface ProfileStats {
+  gamesPlayed: number;
+  totalTimeSeconds: number;
+  favoriteGameTitle: string | null;
+}
+
 // ─── Supabase Database Types ──────────────────────────────────────────────────
 
 export interface Database {
