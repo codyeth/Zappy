@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { User, Gamepad2, Clock, Trophy, Award } from "lucide-react";
+import { useAuth } from "@/lib/auth/AuthContext";
 import type { Profile, RecentScoreEntry, ProfileStats } from "@/lib/types";
 
 function formatMemberSince(createdAt: string) {
@@ -40,16 +41,21 @@ export default function ProfileClient({
   stats,
   isOwnProfile,
 }: ProfileClientProps) {
+  const { user } = useAuth();
+  const avatarUrl =
+    profile.avatarUrl ??
+    (isOwnProfile ? (user?.user_metadata?.picture || user?.user_metadata?.avatar_url) : null);
+
   return (
     <>
       {/* Header card */}
       <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
           <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 border-red-100">
-            {profile.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element -- avatar URL from Supabase storage
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- avatar from profile or Google/OAuth
               <img
-                src={profile.avatarUrl}
+                src={avatarUrl}
                 alt=""
                 className="h-full w-full object-cover"
               />

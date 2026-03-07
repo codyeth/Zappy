@@ -89,10 +89,10 @@ export default function Header({ onMenuToggle }: HeaderProps) {
                   onClick={() => setDropdownOpen((o) => !o)}
                   className="flex items-center gap-2 rounded-lg p-1 pr-2 hover:bg-gray-100 transition-colors"
                 >
-                  {profile.avatarUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- avatar URL from Supabase
+                  {(profile.avatarUrl ?? (user?.user_metadata?.picture || user?.user_metadata?.avatar_url)) ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- avatar from profile or Google/OAuth
                     <img
-                      src={profile.avatarUrl}
+                      src={profile.avatarUrl ?? user?.user_metadata?.picture ?? user?.user_metadata?.avatar_url ?? ""}
                       alt=""
                       className="h-8 w-8 rounded-full object-cover"
                     />
