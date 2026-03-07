@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import GameCard from "@/components/game-card/GameCard";
 import { useToast } from "@/components/ui/Toast";
@@ -45,6 +47,12 @@ export default function CategoryPageClient({ category, games }: Props) {
   return (
     <AppLayout>
       <div className="space-y-5">
+        {/* Breadcrumb */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-gray-500">
+          <Link href="/" className="hover:text-red-500 transition-colors">Home</Link>
+          <ChevronRight className="h-4 w-4 shrink-0" aria-hidden />
+          <span className="font-medium text-gray-900">{category.label} Games</span>
+        </nav>
 
         {/* Header */}
         <div className="flex flex-wrap items-end gap-3">

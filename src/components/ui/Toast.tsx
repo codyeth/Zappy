@@ -2,14 +2,25 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { cn } from "@/lib/utils";
+
+export type ToastVariant = "success" | "info" | "warning" | "error";
 
 interface ToastProps {
   message: string;
+  variant?: ToastVariant;
   onClose: () => void;
   duration?: number;
 }
 
-function Toast({ message, onClose, duration = 2500 }: ToastProps) {
+const VARIANT_BORDER: Record<ToastVariant, string> = {
+  success: "border-l-green-500",
+  info: "border-l-blue-500",
+  warning: "border-l-amber-500",
+  error: "border-l-red-500",
+};
+
+function Toast({ message, variant = "info", onClose, duration = 2500 }: ToastProps) {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -26,7 +37,12 @@ function Toast({ message, onClose, duration = 2500 }: ToastProps) {
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
       }`}
     >
-      <div className="bg-gray-900 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-xl whitespace-nowrap">
+      <div
+        className={cn(
+          "bg-white text-gray-900 text-sm font-medium px-5 py-3 rounded-lg shadow-lg border-l-4 whitespace-nowrap",
+          VARIANT_BORDER[variant]
+        )}
+      >
         {message}
       </div>
     </div>
@@ -35,13 +51,15 @@ function Toast({ message, onClose, duration = 2500 }: ToastProps) {
 
 // ─── Toast Manager hook ───────────────────────────────────────────────────────
 
+type ToastEntry = { id: number; message: string; variant?: ToastVariant };
+
 export function useToast() {
-  const [toasts, setToasts] = useState<{ id: number; message: string }[]>([]);
+  const [toasts, setToasts] = useState<ToastEntry[]>([]);
   const counterRef = useRef(0);
 
-  const showToast = useCallback((message: string) => {
+  const showToast = useCallback((message: string, variant?: ToastVariant) => {
     const id = ++counterRef.current;
-    setToasts((prev) => [...prev, { id, message }]);
+    setToasts((prev) => [...prev, { id, message, variant: variant ?? "info" }]);
   }, []);
 
   const removeToast = useCallback((id: number) => {
@@ -53,7 +71,12 @@ export function useToast() {
       ? createPortal(
           <>
             {toasts.map((t) => (
-              <Toast key={t.id} message={t.message} onClose={() => removeToast(t.id)} />
+              <Toast
+                key={t.id}
+                message={t.message}
+                variant={t.variant}
+                onClose={() => removeToast(t.id)}
+              />
             ))}
           </>,
           document.body

@@ -19,6 +19,9 @@ import AppLayout from "@/components/layout/AppLayout";
 import GameCard from "@/components/game-card/GameCard";
 import Leaderboard from "./Leaderboard";
 import Confetti from "./Confetti";
+import { useAuth } from "@/lib/auth/AuthContext";
+import { createClient } from "@/lib/supabase/client";
+import { submitScore } from "@/lib/supabase/helpers";
 import type { Game } from "@/lib/types";
 import type { GameCallbacks } from "@/lib/game-engine/types";
 import type { GameComponentType } from "./types";
@@ -93,8 +96,10 @@ export default function GamePageClient({ game }: { game: Game }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [myBest, setMyBest]             = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [finalScore, setFinalScore]    = useState(0);
   const lastFinalScore                  = useRef(0);
   const canvasWrapRef                   = useRef<HTMLDivElement>(null);
+  const { user, openAuthModal }         = useAuth();
 
   // Load best from localStorage
   useEffect(() => {
@@ -118,12 +123,19 @@ export default function GamePageClient({ game }: { game: Game }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameStatus]);
 
+  // Submit score to leaderboard when game over and user is logged in
+  useEffect(() => {
+    if (gameStatus !== "over" || !user || lastFinalScore.current <= 0) return;
+    const supabase = createClient();
+    submitScore(supabase, game.slug, user.id, lastFinalScore.current).catch(() => {});
+  }, [gameStatus, user, game.slug]);
+
   // Stable callbacks
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const callbacks = useMemo<GameCallbacks>(() => ({
     onScoreUpdate: (s) => setScore(s),
     onGameStart:   ()  => { setScore(0); setLevel(1); setGameStatus("playing"); },
-    onGameOver:    (fs) => { lastFinalScore.current = fs; setGameStatus("over"); },
+    onGameOver:    (fs) => { lastFinalScore.current = fs; setFinalScore(fs); setGameStatus("over"); },
     onLevelUp:     (l) => setLevel(l),
   }), []);
 
@@ -268,6 +280,20 @@ export default function GamePageClient({ game }: { game: Game }) {
                 </div>
               )}
             </div>
+
+            {/* Login to save score — when game over and guest */}
+            {gameStatus === "over" && !user && finalScore > 0 && (
+              <div className="rounded-xl border-2 border-red-200 bg-red-50 px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+                <p className="font-semibold text-red-800">Login to save your score!</p>
+                <button
+                  type="button"
+                  onClick={openAuthModal}
+                  className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-600"
+                >
+                  Log in
+                </button>
+              </div>
+            )}
 
             {/* Tabs */}
             <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">

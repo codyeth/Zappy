@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import ScrollToTop from "./ScrollToTop";
 import { cn } from "@/lib/utils";
 
 interface AppLayoutProps {
@@ -47,6 +48,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           {children}
         </div>
       </main>
+      <ScrollToTop />
     </>
   );
 }

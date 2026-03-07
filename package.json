@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate": "node scripts/run-migrations.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
@@ -24,6 +25,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
+    "pg": "^8.20.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
